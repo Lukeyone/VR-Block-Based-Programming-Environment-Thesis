@@ -2,188 +2,223 @@
 
 # VR Block-Based Programming Environment
 
-### An interactive visual-programming system built from scratch in Unity
+### An embodied visual-programming puzzle system built in Unity for a Software Engineering Honours thesis
 
-A virtual-reality environment where users construct and execute programs by arranging interactive programming blocks.
+Build programs by physically grabbing, arranging, connecting and executing code blocks in virtual reality, then watch those programs control a character through obstacle-based levels.
+
+![Unity](https://img.shields.io/badge/Unity-2021.3.8f1-000000?logo=unity&logoColor=white)
+![C%23](https://img.shields.io/badge/C%23-Programming-512BD4?logo=csharp&logoColor=white)
+![OpenXR](https://img.shields.io/badge/XR-OpenXR%20%7C%20Oculus-5A45FF)
+![Thesis](https://img.shields.io/badge/Project-Honours%20Thesis-0057B8)
 
 </div>
 
 ---
 
+## Video demonstration
+
+<div align="center">
+
+<a href="https://www.youtube.com/watch?v=SXKN5MoZjaQ">
+  <img src="https://img.youtube.com/vi/SXKN5MoZjaQ/hqdefault.jpg" width="720" alt="Watch the VR Block-Based Programming Environment demonstration">
+</a>
+
+**[Watch the full demonstration on YouTube](https://www.youtube.com/watch?v=SXKN5MoZjaQ)**
+
+</div>
+
+![In-game demonstration of the VR programming environment](docs/images/demo.gif)
+
 ## Overview
 
-This project was developed as my Bachelor of Software Engineering Honours thesis at the University of Queensland.
+This project was developed as my **Bachelor of Software Engineering (Honours)** thesis at **The University of Queensland**.
 
-The system explores how fundamental programming concepts can be represented and manipulated inside virtual reality. Users create programs by interacting with visual blocks representing instructions such as movement, loops, conditional statements and functions.
+The system investigates how programming logic can be represented as tangible objects in a three-dimensional environment. Instead of typing code, a user constructs a program by picking up colour-coded blocks, placing them into a spatial code tray and connecting blocks through input/output slots. A custom runtime then interprets the arrangement and executes the resulting behaviour inside a level.
 
-![Demonstration of the VR programming environment](docs/images/demo.gif)
+The prototype combines:
 
-## Core Features
+- A VR interaction system for grabbing and positioning code blocks
+- A custom visual-programming model and execution engine
+- Grid-based character movement and obstacle detection
+- Puzzle levels that teach sequencing and control flow
+- Immediate visual and UI feedback during execution
 
-* Interactive programming blocks in virtual reality
-* Sequential instruction execution
-* Movement commands
-* Loop blocks
-* Conditional `if` blocks
-* Reusable functions
-* Block connection and ordering
-* Visual representation of program flow
-* Program execution within the VR environment
-* Immediate visual feedback
+## What the user can program
 
-## Example Program
+| Concept | Implementation in the environment |
+|---|---|
+| **Sequence** | Blocks execute in the order in which they are arranged in the code tray |
+| **Movement** | Forward movement and directional/turning blocks control the level character |
+| **Conditionals** | Conditional blocks query the current world state, such as whether movement is possible |
+| **Loops** | While-style blocks repeatedly execute a connected action while a condition remains true |
+| **Functions** | A separate function tray lets users define reusable behaviour and invoke it from the main program |
 
-A user could construct a program resembling:
+A program can resemble:
 
 ```text
 Move Forward
-Repeat 4 Times
-    Turn Right
+While Can Move
     Move Forward
-End Loop
+End While
+Turn Right
+Call Function
 ```
 
-The connected blocks are interpreted and executed by the environment, causing the controlled object or character to perform the corresponding actions.
+The program is assembled spatially, interpreted at runtime and translated into visible actions on the level map.
 
-## Motivation
+## Core features
 
-Traditional programming is generally represented through text on a two-dimensional screen.
+- **Physical code construction** — grab, move, connect, reorder and remove programming blocks using VR controllers
+- **Spatial code tray** — arranges blocks into an executable sequence and highlights valid placement areas
+- **Holographic input slots** — show where conditions and actions can be attached to compound blocks
+- **Custom interpreter** — converts the physical block arrangement into runtime behaviour
+- **Timed execution** — actions run sequentially through coroutines rather than completing simultaneously
+- **Loop protection** — while blocks include a maximum-iteration guard to prevent unbounded execution
+- **World-aware conditions** — condition blocks inspect the map state before selecting a branch or continuing a loop
+- **Reusable functions** — users can build a secondary function sequence and call it from the main program
+- **Puzzle progression** — levels include start tiles, goals, obstacles, limited block inventories and inter-level teleporters
+- **Execution feedback** — messages, highlights and visual effects communicate program state and errors
 
-This project investigated whether programming concepts could instead be represented as physical, spatial objects that users could:
-
-* Pick up
-* Move
-* Connect
-* Reorder
-* Execute
-* Debug visually
-
-The goal was to explore a more tangible and interactive approach to understanding program structure and control flow.
-
-## System Architecture
+## System architecture
 
 ```text
-VR user interaction
-        ↓
-Block selection and placement
-        ↓
-Block connection graph
-        ↓
-Program validation
-        ↓
-Instruction interpretation
-        ↓
-Runtime execution
-        ↓
-Visual feedback in the environment
+VR controllers
+      ↓
+XR grab and placement interactions
+      ↓
+Code blocks + input/output slots
+      ↓
+Code tray and function tray
+      ↓
+Structural checks and execution ordering
+      ↓
+Custom block interpreter
+      ↓
+Map and character controller
+      ↓
+Movement, collision checks and level feedback
 ```
 
-## Programming Concepts Implemented
+### Block model
 
-### Sequential Execution
+The execution system is organised around specialised block types:
 
-Blocks execute in their connected order.
+- **Executable blocks** perform actions and expose an action-completion duration.
+- **Conditional blocks** return a Boolean result based on the environment.
+- **Compound blocks** accept connected condition/action blocks through spatial slots.
+- **Function blocks** execute a reusable sequence stored in a separate tray.
 
-### Loops
+For example, the movement condition accesses a central map tracker to determine whether the character can move. A while block repeatedly invokes its connected executable block, waits for the action to complete and stops when its condition becomes false or its iteration limit is reached.
 
-Loop blocks execute an enclosed sequence multiple times.
+### World and level layer
 
-### Conditional Logic
+The programmed character operates on a level map containing:
 
-Conditional blocks execute instructions only when their condition is satisfied.
+- Walkable paths
+- Obstacles and walls
+- Start and goal tiles
+- Direction indicators
+- Level-transition teleporters
+- Per-level block limits and instructional UI
 
-### Functions
+This connects abstract control-flow concepts to immediately visible consequences in the environment.
 
-Users can group reusable behaviour into functions and invoke it from another part of the program.
+## Technology stack
 
-### Movement Instructions
+- **Unity 2021.3.8f1 (LTS)**
+- **C#**
+- **Unity XR Interaction Toolkit 2.3.2**
+- **OpenXR Plugin 1.4.2**
+- **Oculus XR Plugin 3.0.2**
+- **TextMesh Pro**
+- **Universal Render Pipeline / Shader Graph**
+- Unity coroutines, physics, prefabs and scene-based level design
 
-Movement blocks translate programming instructions into visible actions inside the virtual environment.
+## Running the project
 
-## Technical Challenges
+> **Repository size:** this is a complete Unity VR project containing scenes, models, textures, prefabs and other source assets, so the clone is large.
 
-The project required solutions for:
+### Requirements
 
-* Representing program logic as physical VR objects
-* Determining block execution order
-* Supporting nested control-flow structures
-* Validating block connections
-* Translating block arrangements into executable behaviour
-* Providing understandable feedback when a program was invalid
-* Designing interactions suitable for VR controllers
+- Unity Hub
+- **Unity 2021.3.8f1**
+- An OpenXR-compatible VR headset and runtime
+- A machine capable of running a Unity PCVR project
+- Git installed locally
 
-## Technologies
+### Setup
 
-* Unity
-* C#
-* Virtual-reality interaction systems
-* ShaderLab
-* GLSL
-* HLSL
-* Visual programming
-* Custom program interpretation
+1. Clone the repository:
 
-## Repository Structure
+   ```bash
+   git clone https://github.com/Lukeyone/VR-Block-Based-Programming-Environment-Thesis.git
+   ```
+
+2. Add the cloned directory as a project in Unity Hub.
+3. Open it with **Unity 2021.3.8f1** and allow Unity to restore the packages.
+4. Confirm that the appropriate XR provider is enabled under **Project Settings → XR Plug-in Management**.
+5. Connect and start the headset runtime.
+6. Open a gameplay scene from `Assets/Scenes/` — for example, `Alternate Level 1.unity` — and enter Play Mode.
+
+XR configuration can vary between headsets and runtime versions. The project includes both OpenXR and Oculus XR packages, but local plug-in settings may still need to be adjusted for the target device.
+
+## Repository structure
 
 ```text
-├── Assets/                 # Scripts, scenes, prefabs and resources
-├── Packages/               # Unity package configuration
-├── ProjectSettings/        # Unity project settings
-├── docs/
-│   └── images/             # Screenshots and demonstration media
+├── Assets/
+│   ├── Scenes/              # Gameplay and alternate level scenes
+│   ├── Scripts/             # Block execution, map, interaction and UI logic
+│   ├── Prefabs/             # Code blocks, character and reusable scene objects
+│   ├── Materials/           # Block colours and environment materials
+│   └── ...                  # Models, textures, audio and XR assets
+├── Packages/
+│   └── manifest.json        # Unity and XR package dependencies
+├── ProjectSettings/         # Unity editor, rendering and XR configuration
+├── docs/images/             # README demonstration media
 ├── .gitignore
 └── README.md
 ```
 
-## Running the Project
+## Engineering challenges addressed
 
-### Requirements
+- Mapping a program's abstract syntax to physical, movable VR objects
+- Preserving execution order while blocks are freely repositioned
+- Designing input/output connections that remain understandable in 3D space
+- Supporting nested control-flow concepts without a conventional text parser
+- Synchronising code execution with visible character movement
+- Preventing infinite loops in a user-constructed program
+- Connecting conditional logic to live world state and collision information
+- Communicating invalid configurations and runtime state through VR-friendly feedback
+- Balancing the number of available blocks across progressive puzzle levels
 
-* Unity `[insert version]`
-* `[Insert supported VR headset or runtime]`
-* `[Insert OpenXR, SteamVR or other dependencies]`
+## Academic and project status
 
-### Setup
+This repository is an **academic research prototype**, not a production programming platform. It was designed to explore embodied visual programming and to support an honours-level investigation into programming interactions in VR.
 
-1. Clone this repository.
-2. Open the project through Unity Hub.
-3. Use Unity version `[insert version]`.
-4. Connect a supported VR headset.
-5. Open the primary scene at `[insert scene path]`.
-6. Enter Play Mode or create a local build.
-
-## Thesis Outcomes
-
-Add your actual thesis findings here, including:
-
-* What you tested
-* Number and type of participants, if applicable
-* Usability findings
-* Technical results
-* Conclusions about visual programming in VR
+The project reached a playable level-based prototype with sequential instructions, conditionals, loops, functions, instructional UI and visual-feedback variants. Development was completed in 2023; the repository is preserved as a portfolio and research artefact.
 
 ## Limitations
 
-* `[Hardware or headset limitations]`
-* `[Interaction limitations]`
-* `[Programming-language limitations]`
-* `[Study or evaluation limitations]`
+- The project depends on an older Unity LTS and XR package configuration.
+- VR input and rendering behaviour may require adjustment on newer runtimes or headsets.
+- The programming language intentionally supports a limited set of commands and control-flow structures.
+- The prototype is scene-driven and was designed for a controlled thesis evaluation rather than general-purpose authoring.
+- The repository contains large Unity assets and is not distributed as a lightweight packaged release.
 
-## Future Development
+## Potential future work
 
-Potential extensions include:
-
-* Additional data types and variables
-* Nested functions
-* More advanced debugging tools
-* Collaborative programming in VR
-* Saving and loading programs
-* Program export to a traditional language
-* Improved accessibility and onboarding
+- Variables, values and additional data types
+- Nested compound blocks and more advanced functions
+- Step-through execution, breakpoints and richer debugging tools
+- Saving, loading and sharing programs
+- Exporting visual programs to a conventional language
+- Collaborative multi-user programming
+- Accessibility improvements and alternative input methods
+- Updated OpenXR configuration and standalone-headset support
 
 ## Author
 
-**Lachlan McDonald**
-Bachelor of Software Engineering (Honours), University of Queensland
+**Lachlan McDonald**  
+Bachelor of Software Engineering (Honours), The University of Queensland
 
-[LinkedIn](https://www.linkedin.com/in/lachlanmcdonaldtech)
+[LinkedIn](https://www.linkedin.com/in/lachlanmcdonaldtech) · [GitHub](https://github.com/Lukeyone) · [Video demo](https://www.youtube.com/watch?v=SXKN5MoZjaQ)
